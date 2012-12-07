@@ -13,7 +13,8 @@ class Item:
         if not 'keywords' in kwargs: kwargs['keywords'] = []
         fields_to_search = {'title': 'title',
                             'pub': 'publicationTitle',
-                            'author': 'author_str'
+                            'author': 'author_str',
+                            'year': 'year',
                             }
         result = []
         match_score = 0

@@ -135,10 +135,11 @@ def main():
     zotero_dir = get_zotero_dir()
     z = Zotero(zotero_dir)
     
-    args = []
-    for line in sys.__stdin__:
-        args.append(line.strip())
-    if not args: args = sys.argv[2:]
+    if len(sys.argv) > 2: args = sys.argv[2:]
+    else:
+        args = []
+        for line in sys.__stdin__:
+            args.append(line.strip())
     
     
     if command in ('search', 'best'):

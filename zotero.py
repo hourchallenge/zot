@@ -1,6 +1,7 @@
 import os
 import sys
 import sqlalchemy as sql
+from item import Item
 
 
 class Zotero:
@@ -18,6 +19,12 @@ class Zotero:
         self.items = sql.Table('items', self.metadata, autoload=True)
         self.fields = sql.Table('fields', self.metadata, autoload=True)
         self.item_data = sql.Table('itemData', self.metadata, autoload=True)
+        self.item_data_values = sql.Table('itemDataValues', self.metadata, autoload=True)
+        self.item_attachments = sql.Table('itemAttachments', self.metadata, autoload=True)
+        self.collections = sql.Table('collections', self.metadata, autoload=True)
+        self.collection_items = sql.Table('collectionItems', self.metadata, autoload=True)
+        
+        self.get_items()
         
 
     def get_items(self):
@@ -30,14 +37,17 @@ class Zotero:
         result = query.execute()
         items = {}
         for key, field_name, value in result:
-            if not key in items: items[key] = {}
+            if not key in items: items[key] = {'key': key}
             items[key][field_name] = value
             
-        self.items = items
+        self.all_items = {k: Item(v) for k, v in items.items()}
 
         
     def search(self, best=False, **kwargs):
-        pass
+        matches = [(item, item.match(**kwargs)) for item in self.all_items.values()]
+        
+        # TODO: return only best
+        return filter(lambda m: m[1] > 0, matches)
         
     def read(self, keys):
         pass
@@ -94,7 +104,11 @@ def main():
             else: args[set_arg].append(arg)
             n += 1
             
-        z.search(best=command=='best', **args)
+        result = z.search(best=command=='best', **args)
+        for i in result:
+            print i
+    elif command == 'debug':
+        for i in [item.__dict__ for item in z.all_items.values()]: print i
     else:
         help_msg()
         return

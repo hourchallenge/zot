@@ -25,8 +25,9 @@ class Item:
         match_score = 0
         for field, to_search in fields_to_search.items():
             if not hasattr(self, to_search): continue
-            search_terms = kwargs['keywords']
-            if field in kwargs: search_terms += kwargs[field]
+            
+            if field in kwargs: search_terms = kwargs['keywords'] + kwargs[field]
+            else: search_terms = kwargs['keywords']
             
             text_to_search = getattr(self, to_search)
             if isinstance(text_to_search, set): text_to_search = ','.join(text_to_search)

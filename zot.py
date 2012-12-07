@@ -156,15 +156,15 @@ def main():
         result = z.search(best=command=='best', **search_args)
         for i in result:
             print getattr(i, 'key')
-    elif command == ('bib', 'bibliography'):
+    elif command in ('bib', 'bibliography'):
         for result in [z.all_items[key].bibliography() for key in args]:
             print result
     elif command in ('cit', 'cite', 'citation'):
         for result in [z.all_items[key].citation() for key in args]:
             print result
     elif command == 'read':
-        for result in [z.all_items[key].full_text(z.zotero_storage_path) for key in args]:
-            print result
+        for key in args:
+            z.all_items[key].get_full_text(z.zotero_storage_path)
     elif command == 'debug':
         for i in [item.__dict__ for item in z.all_items.values()]: print i
     else:

@@ -135,18 +135,24 @@ def main():
     zotero_dir = get_zotero_dir()
     z = Zotero(zotero_dir)
     
+    args = []
+    for line in sys.__stdin__:
+        args.append(line.strip())
+    if not args: args = sys.argv[2:]
+    
+    
     if command in ('search', 'best'):
-        args = {}
-        n = 2
+        search_args = {}
+        n = 0
         set_arg = 'keywords'
-        while n < len(sys.argv):
-            if not set_arg in args: args[set_arg] = []
-            arg = sys.argv[n]
+        while n < len(args):
+            if not set_arg in search_args: search_args[set_arg] = []
+            arg = args[n]
             if arg.startswith('--'): set_arg = arg[2:]
-            else: args[set_arg].append(arg)
+            else: search_args[set_arg].append(arg)
             n += 1
             
-        result = z.search(best=command=='best', **args)
+        result = z.search(best=command=='best', **search_args)
         for i in result:
             print i.citation(), i.bibliography()
     elif command == 'debug':

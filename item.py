@@ -1,3 +1,5 @@
+import os
+
 def format_author(author):
     return '%s, %s' % author
 
@@ -42,32 +44,40 @@ class Item:
             
     author_str = property(author_string)
         
+        
     def bibliography(self):
         bib = self.author_string()
-        if hasattr(self, 'year'): bib += ' %s.' % getattr(self, 'year')
-        if hasattr(self, 'title'): bib += ' %s.' % getattr(self, 'title')
-        if hasattr(self, 'publicationTitle'): bib += ' %s.' % getattr(self, 'publicationTitle')
+        if hasattr(self, 'year'): bib += ' %s.' % self.year
+        if hasattr(self, 'title'): bib += ' %s.' % self.title
+        if hasattr(self, 'publicationTitle'): bib += ' %s.' % self.publicationTitle
 
         v = []
-        if hasattr(self, 'volume'): v += ['Vol. %s' % getattr(self, 'volume')]
-        if hasattr(self, 'issue'): v += ['Issue %s' % getattr(self, 'issue')]
-        if hasattr(self, 'pages'): v += ['Pages %s' % getattr(self, 'pages')]        
+        if hasattr(self, 'volume'): v += ['Vol. %s' % self.volume]
+        if hasattr(self, 'issue'): v += ['Issue %s' % self.issue]
+        if hasattr(self, 'pages'): v += ['Pages %s' % self.pages]       
         if v: bib += ' ' + (', '.join(v)) + '.'
         
-        if hasattr(self, 'doi'): bib += ' doi:%s' % getattr(self, 'doi')
+        if hasattr(self, 'doi'): bib += ' doi:%s' % self.doi
         
         return bib
+        
         
     def citation(self):
         citation = ''
         if hasattr(self, 'authors'): 
-            citation = (getattr(self, 'authors')[0][0])
+            citation = (self.authors[0][0])
             if len(self.authors) > 1: citation += ' et al.'
-        else: citation = getattr(self, 'title')
-        if hasattr(self, 'year'): citation += ' %s.' % getattr(self, 'year')
+        else: citation = self.title
+        if hasattr(self, 'year'): citation += ' %s.' % self.year
         
         return citation
         
         
-    def full_text(self):
-        pass
+    def full_text(self, storage_dir):
+        if hasattr(self, 'attachments'):
+            for attachment in self.attachments:
+                # TODO: read text from pdf
+                return attachment.replace('storage:', os.path.join(storage_dir, self.key + '/'))
+                pass
+        else: 
+            return "No PDF attachments."

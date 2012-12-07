@@ -109,7 +109,6 @@ def help_msg():
 Commands:
     search
     best
-    collection
     read
     notes
     bib
@@ -164,7 +163,7 @@ def main():
         for result in [z.all_items[key].citation() for key in args]:
             print result
     elif command == 'read':
-        for result in [z.all_items[key].full_text() for key in args]:
+        for result in [z.all_items[key].full_text(z.zotero_storage_path) for key in args]:
             print result
     elif command == 'debug':
         for i in [item.__dict__ for item in z.all_items.values()]: print i

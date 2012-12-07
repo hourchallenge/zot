@@ -29,9 +29,9 @@ class Item:
             if field in kwargs: search_terms += kwargs[field]
             
             text_to_search = getattr(self, to_search)
-            if isinstance(text_to_search, set): text_to_search = ','.join([s.lower() for s in text_to_search])
-            text_to_search = text_to_search.lower()
-            search_terms = [term.lower() for term in search_terms]
+            if isinstance(text_to_search, set): text_to_search = ','.join(text_to_search)
+            text_to_search = text_to_search
+            search_terms = [term for term in search_terms]
             for search_term in search_terms:
                 match_score += len(re.findall(search_term, text_to_search))
         

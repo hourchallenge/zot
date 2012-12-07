@@ -36,7 +36,7 @@ class Zotero:
         self.items = items
 
         
-    def search(self, **kwargs):
+    def search(self, best=False, **kwargs):
         pass
         
     def read(self, keys):
@@ -69,7 +69,7 @@ def main():
         help_msg()
         return
         
-    command = sys.argv[1]
+    command = sys.argv[1].lower()
     if command == 'help':
         help_msg()
         return
@@ -82,6 +82,22 @@ def main():
     from settings import get_zotero_dir
     zotero_dir = get_zotero_dir()
     z = Zotero(zotero_dir)
+    
+    if command in ('search', 'best'):
+        args = {}
+        n = 2
+        set_arg = 'keywords'
+        while n < len(sys.argv):
+            if not set_arg in args: args[set_arg] = []
+            arg = sys.argv[n]
+            if arg.startswith('--'): set_arg = arg[2:]
+            else: args[set_arg].append(arg)
+            n += 1
+            
+        z.search(best=command=='best', **args)
+    else:
+        help_msg()
+        return
 
 
 if __name__ == '__main__':

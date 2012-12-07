@@ -1,7 +1,6 @@
 import os
 import sys
 import sqlalchemy as sql
-from settings import zotero_dir
 
 
 class Zotero:
@@ -62,6 +61,7 @@ Commands:
     read
     notes
     bib
+    path
     help'''
         
 def main():
@@ -73,7 +73,14 @@ def main():
     if command == 'help':
         help_msg()
         return
+    elif command == 'path':
+        arg = sys.argv[2]
+        from settings import write_zotero_dir
+        write_zotero_dir(arg)
+        sys.exit()
         
+    from settings import get_zotero_dir
+    zotero_dir = get_zotero_dir()
     z = Zotero(zotero_dir)
 
 

@@ -41,7 +41,9 @@ class Zotero:
         items = {}
         for key, field_name, value in result:
             if not key in items: items[key] = {'key': key}
-            items[key][field_name] = value
+            if field_name == 'date':
+                items[key]['year'] = value[:4]
+            else: items[key][field_name] = value
             
         # get authors for these items
         query = sql.select([self.items.c.key, self.creator_data.c.lastName, self.creator_data.c.firstName],
@@ -83,8 +85,9 @@ class Zotero:
     def search(self, best=False, **kwargs):
         matches = [(item, item.match(**kwargs)) for item in self.all_items.values()]
         
-        # TODO: return only best
-        return filter(lambda m: m[1] > 0, matches)
+        if not matches: return []
+        if best: return [sorted(matches, key = lambda m: m[1], reverse=True)[0][0]]
+        return [m[0] for m in filter(lambda m: m[1] > 0, matches)]
         
     def read(self, keys):
         pass
@@ -145,7 +148,7 @@ def main():
             
         result = z.search(best=command=='best', **args)
         for i in result:
-            print i
+            print i.citation(), i.bibliography()
     elif command == 'debug':
         for i in [item.__dict__ for item in z.all_items.values()]: print i
     else:

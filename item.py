@@ -1,3 +1,6 @@
+def format_author(author):
+    return '%s, %s' % author
+
 class Item:
     def __init__(self, item_dict={}):
         self.__dict__ = item_dict
@@ -25,11 +28,26 @@ class Item:
         return match_score
         
         
+    def author_string(self):
+        if not hasattr(self, 'authors'): return ''
+        return ', '.join([format_author(a) for a in getattr(self, 'authors')])
+        
     def bibliography(self):
-        pass
+        bib = self.author_string()
+        if hasattr(self, 'year'): bib += ' %s.' % getattr(self, 'year')
+        if hasattr(self, 'title'): bib += ' %s.' % getattr(self, 'title')
+        if hasattr(self, 'publicationTitle'): bib += ' %s.' % getattr(self, 'publicationTitle')
+        
+        return bib
         
     def citation(self):
-        pass
+        citation = ''
+        if hasattr(self, 'authors'): citation = format_author(getattr(self, 'authors')[0])
+        else: citation = getattr(self, 'title')
+        if hasattr(self, 'year'): citation += ' %s.' % getattr(self, 'year')
+        
+        return citation
+        
         
     def full_text(self):
         pass

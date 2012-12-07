@@ -1,6 +1,7 @@
 def format_author(author):
     return '%s, %s' % author
 
+
 class Item:
     def __init__(self, item_dict={}):
         self.__dict__ = item_dict
@@ -12,6 +13,7 @@ class Item:
         if not 'keywords' in kwargs: kwargs['keywords'] = []
         fields_to_search = {'title': 'title',
                             'pub': 'publicationTitle',
+                            'author': 'author_str'
                             }
         result = []
         match_score = 0
@@ -30,13 +32,27 @@ class Item:
         
     def author_string(self):
         if not hasattr(self, 'authors'): return ''
-        return ', '.join([format_author(a) for a in getattr(self, 'authors')])
+        authors = getattr(self, 'authors')
+        if len(authors) == 1: return format_author(authors[0])
+        elif len(authors) == 2: return ' and '.join([format_author(a) for a in authors])
+        else:
+            return ', '.join([format_author(authors[n]) if n < len(authors)-1 else 'and %s' % format_author(authors[n]) for n in range(len(authors))])
+            
+    author_str = property(author_string)
         
     def bibliography(self):
         bib = self.author_string()
         if hasattr(self, 'year'): bib += ' %s.' % getattr(self, 'year')
         if hasattr(self, 'title'): bib += ' %s.' % getattr(self, 'title')
         if hasattr(self, 'publicationTitle'): bib += ' %s.' % getattr(self, 'publicationTitle')
+
+        v = []
+        if hasattr(self, 'volume'): v += ['Vol. %s' % getattr(self, 'volume')]
+        if hasattr(self, 'issue'): v += ['Issue %s' % getattr(self, 'issue')]
+        if hasattr(self, 'pages'): v += ['Pages %s' % getattr(self, 'pages')]        
+        if v: bib += ' ' + (', '.join(v)) + '.'
+        
+        if hasattr(self, 'doi'): bib += ' doi:%s' % getattr(self, 'doi')
         
         return bib
         

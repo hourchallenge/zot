@@ -14,6 +14,10 @@ zot is a command line interface to Zotero.
         help
 
 
+Before using, you'll need to set your Zotero path, like this:
+    
+    zot path /path/to/Zotero/directory/
+
 Searches will return a list of keys which can be piped back to zot to do things with the results.
 For example, 
 

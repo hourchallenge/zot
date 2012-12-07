@@ -23,6 +23,9 @@ class Zotero:
         self.item_attachments = sql.Table('itemAttachments', self.metadata, autoload=True)
         self.collections = sql.Table('collections', self.metadata, autoload=True)
         self.collection_items = sql.Table('collectionItems', self.metadata, autoload=True)
+        self.item_creators = sql.Table('itemCreators', self.metadata, autoload=True)
+        self.creators = sql.Table('creators', self.metadata, autoload=True)
+        self.creator_data = sql.Table('creatorData', self.metadata, autoload=True)
         
         self.get_items()
         
@@ -39,6 +42,40 @@ class Zotero:
         for key, field_name, value in result:
             if not key in items: items[key] = {'key': key}
             items[key][field_name] = value
+            
+        # get authors for these items
+        query = sql.select([self.items.c.key, self.creator_data.c.lastName, self.creator_data.c.firstName],
+                           (self.items.c.itemID == self.item_creators.c.itemID) &
+                           (self.creators.c.creatorID == self.item_creators.c.creatorID) &
+                           (self.creators.c.creatorDataID == self.creator_data.c.creatorDataID)
+                           )
+        result = query.execute()
+        for key, last, first in result:
+            if not key in items: items[key] = {'key': key}
+            if not 'authors' in items[key]: items[key]['authors'] = []
+            items[key]['authors'].append((last, first))
+            
+        # get all PDF attachments for these items
+        query = sql.select([self.items.c.key, self.item_attachments.c.path],
+                           (self.items.c.itemID == self.item_attachments.c.itemID) &
+                           (self.item_attachments.c.mimeType == 'application/pdf')
+                           )
+        result = query.execute()
+        for key, path in result:
+            if not key in items: items[key] = {'key': key}
+            if not 'attachments' in items[key]: items[key]['attachments'] = []
+            items[key]['attachments'].append(path)
+
+        # get all collections
+        query = sql.select([self.collections.c.collectionName, self.items.c.key],
+                           (self.collections.c.collectionID == self.collection_items.c.collectionID) &
+                           (self.collection_items.c.itemID == self.items.c.itemID)
+                           )
+        result = query.execute()
+        collections = {}
+        for collection, key in result:
+            if not collection in collections: collections[collection] = set()
+            collections[collection].add(key)
             
         self.all_items = {k: Item(v) for k, v in items.items()}
 
@@ -62,12 +99,14 @@ class Zotero:
         pass
 
 
+
 def help_msg():
     print '''Usage: zot (command) (args)
     
 Commands:
     search
     best
+    collection
     read
     notes
     bib

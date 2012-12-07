@@ -22,7 +22,19 @@ class Zotero:
         
 
     def get_items(self):
-        pass
+        # get all items and associated field names, and store in items dictionary
+        query = sql.select([self.items.c.key, self.fields.c.fieldName, self.item_data_values.c.value], 
+                           (self.items.c.itemID == self.item_data.c.itemID) &
+                           (self.item_data.c.fieldID == self.fields.c.fieldID) &
+                           (self.item_data.c.valueID == self.item_data_values.c.valueID)
+                           )
+        result = query.execute()
+        items = {}
+        for key, field_name, value in result:
+            if not key in items: items[key] = {}
+            items[key][field_name] = value
+            
+        self.items = items
 
         
     def search(self, **kwargs):

@@ -15,13 +15,14 @@ class Item:
                             'pub': 'publicationTitle',
                             'author': 'author_str',
                             'year': 'year',
+                            'collection': 'collections',
                             }
         result = []
         match_score = 0
         for field, to_search in fields_to_search.items():
             if not hasattr(self, to_search): continue
             search_terms = kwargs['keywords']
-            if field in kwargs: field += kwargs[field]
+            if field in kwargs: search_terms += kwargs[field]
             
             text_to_search = getattr(self, to_search).lower()
             search_terms = [term.lower() for term in search_terms]
@@ -59,7 +60,9 @@ class Item:
         
     def citation(self):
         citation = ''
-        if hasattr(self, 'authors'): citation = format_author(getattr(self, 'authors')[0])
+        if hasattr(self, 'authors'): 
+            citation = (getattr(self, 'authors')[0][0])
+            if len(self.authors) > 1: citation += ' et al.'
         else: citation = getattr(self, 'title')
         if hasattr(self, 'year'): citation += ' %s.' % getattr(self, 'year')
         

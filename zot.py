@@ -107,14 +107,14 @@ def help_msg():
     print '''Usage: zot (command) (args)
     
 Commands:
-    search
-    best
-    read
-    notes
-    bib
-    cit
-    path
-    files
+    search [keywords]: return keys of all matching items
+    best [keywords]: return key of best search match
+    bib [keys]: view bibliography for one or more items
+    cit [keys]: view citations for one or more items
+    files [keys]: view all attached files for one or more items
+    read [keys]: view text content of attached PDFs for one or more items
+    notes [keys]: view all notes for one or more items
+    path (zotero_dir): set the path to your Zotero directory
     help'''
         
 def main():

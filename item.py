@@ -1,5 +1,6 @@
 import os
 import pdf2txt
+import re
 
 def format_author(author):
     return '%s, %s' % author
@@ -32,7 +33,7 @@ class Item:
             text_to_search = text_to_search.lower()
             search_terms = [term.lower() for term in search_terms]
             for search_term in search_terms:
-                match_score += text_to_search.count(search_term)
+                match_score += len(re.findall(search_term, text_to_search))
         
         return match_score
         

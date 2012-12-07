@@ -51,9 +51,29 @@ class Zotero:
         
     def bib(self, keys):
         pass
-        
+
+
+def help_msg():
+    print '''Usage: zot (command) (args)
+    
+Commands:
+    search
+    best
+    read
+    notes
+    bib
+    help'''
         
 def main():
+    if len(sys.argv) < 2:
+        help_msg()
+        return
+        
+    command = sys.argv[1]
+    if command == 'help':
+        help_msg()
+        return
+        
     z = Zotero(zotero_dir)
 
 

@@ -1,17 +1,17 @@
 zot is a command line interface to Zotero.
 
-Usage: zot (command) args
+    Usage: zot (command) args
 
-Commands:
-    search [keywords]: return keys of all matching items
-    best [keywords]: return key of best search match
-    bib [keys]: view bibliography for one or more items
-    cit [keys]: view citations for one or more items
-    files [keys]: view all attached files for one or more items
-    read [keys]: view text content of attached PDFs for one or more items
-    notes [keys]: view all notes for one or more items
-    path (zotero_dir): set the path to your Zotero directory
-    help
+    Commands:
+        search [keywords]: return keys of all matching items
+        best [keywords]: return key of best search match
+        bib [keys]: view bibliography for one or more items
+        cit [keys]: view citations for one or more items
+        files [keys]: view all attached files for one or more items
+        read [keys]: view text content of attached PDFs for one or more items
+        notes [keys]: view all notes for one or more items
+        path (zotero_dir): set the path to your Zotero directory
+        help
 
 
 Searches will return a list of keys which can be piped back to zot to do things with the results.

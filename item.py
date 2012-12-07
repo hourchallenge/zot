@@ -76,10 +76,14 @@ class Item:
         return citation
         
         
+    def format_filename(self, name, storage_dir):
+        return name.replace('storage:', os.path.join(storage_dir, self.key + '/'))
+        
+        
     def get_full_text(self, storage_dir):
         if hasattr(self, 'attachments'):
             for attachment in self.attachments:
                 # TODO: read text from pdf
-                pdf2txt.main(['pdf2txt', attachment.replace('storage:', os.path.join(storage_dir, self.key + '/'))])
+                pdf2txt.main(['pdf2txt', self.format_filename(attachment, storage_dir)])
         else: 
             return "No PDF attachments."

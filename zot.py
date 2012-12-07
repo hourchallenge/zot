@@ -114,6 +114,7 @@ Commands:
     bib
     cit
     path
+    files
     help'''
         
 def main():
@@ -162,6 +163,11 @@ def main():
     elif command in ('cit', 'cite', 'citation'):
         for result in [z.all_items[key].citation() for key in args]:
             print result
+    elif command == 'files':
+        for result in [z.all_items[key] for key in args]:
+            if hasattr(result, 'attachments'):
+                for attachment in result.attachments:
+                    print result.format_filename(attachment, z.zotero_storage_path)
     elif command == 'read':
         for key in args:
             z.all_items[key].get_full_text(z.zotero_storage_path)

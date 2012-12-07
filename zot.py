@@ -26,6 +26,7 @@ class Zotero:
         self.item_creators = sql.Table('itemCreators', self.metadata, autoload=True)
         self.creators = sql.Table('creators', self.metadata, autoload=True)
         self.creator_data = sql.Table('creatorData', self.metadata, autoload=True)
+        self.item_notes = sql.Table('itemNotes', self.metadata, autoload=True)
         
         self.get_items()
         
@@ -67,6 +68,16 @@ class Zotero:
             if not key in items: items[key] = {'key': key}
             if not 'attachments' in items[key]: items[key]['attachments'] = []
             items[key]['attachments'].append(path)
+            
+        # get all notes for these items
+        query = sql.select([self.items.c.key, self.item_notes.c.note],
+                           (self.items.c.itemID == self.item_notes.c.itemID)
+                           )
+        result = query.execute()
+        for key, note in result:
+            if not key in items: items[key] = {'key': key}
+            if not 'notes' in items[key]: items[key]['notes'] = []
+            items[key]['notes'].append(note)
 
         # get all collections
         query = sql.select([self.collections.c.collectionName, self.items.c.key],
@@ -78,6 +89,9 @@ class Zotero:
         for collection, key in result:
             if not collection in collections: collections[collection] = set()
             collections[collection].add(key)
+            if not key in items: items[key] = {'key': key}
+            if not 'collections' in items[key]: items[key]['collections'] = set()
+            items[key]['collections'].add(collection)
             
         self.all_items = {k: Item(v) for k, v in items.items()}
 
@@ -171,6 +185,10 @@ def main():
     elif command == 'read':
         for key in args:
             z.all_items[key].get_full_text(z.zotero_storage_path)
+    elif command == 'notes':
+        for result in [z.all_items[key] for key in args]:
+            if hasattr(result, 'notes'):
+                for note in result.notes: print note
     elif command == 'debug':
         for i in [item.__dict__ for item in z.all_items.values()]: print i
     else:

@@ -27,7 +27,9 @@ class Item:
             search_terms = kwargs['keywords']
             if field in kwargs: search_terms += kwargs[field]
             
-            text_to_search = getattr(self, to_search).lower()
+            text_to_search = getattr(self, to_search)
+            if isinstance(text_to_search, set): text_to_search = ','.join([s.lower() for s in text_to_search])
+            text_to_search = text_to_search.lower()
             search_terms = [term.lower() for term in search_terms]
             for search_term in search_terms:
                 match_score += text_to_search.count(search_term)

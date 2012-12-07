@@ -6,13 +6,25 @@ from settings import zotero_dir
 
 class Zotero:
     def __init__(self, zotero_dir):
-        pass
+        self.zotero_dir = zotero_dir
+        self.zotero_db_path = os.path.abspath(os.path.join(zotero_dir, 'zotero.sqlite'))
+        self.zotero_storage_path = os.path.join(zotero_dir, 'storage/')
+        if not os.path.exists(self.zotero_db_path):
+            raise Exception('Zotero db not found at %s.' % self.zotero_db_path)
+        self.db = sql.create_engine('sqlite:///' + self.zotero_db_path)
+        self.db.echo = False
+        self.metadata = sql.MetaData(self.db)
+
+        # tables
+        self.items = sql.Table('items', self.metadata, autoload=True)
+        self.fields = sql.Table('fields', self.metadata, autoload=True)
+        self.item_data = sql.Table('itemData', self.metadata, autoload=True)
         
 
     def get_items(self):
         pass
-        
 
+        
     def search(self, **kwargs):
         pass
         

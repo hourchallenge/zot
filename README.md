@@ -19,17 +19,16 @@ Before using, you'll need to set your Zotero path, like this:
     zot path /path/to/Zotero/directory/
 
 Searches will return a list of keys which can be piped back to zot to do things with the results.
-For example, 
+For example, to return the keys of items which are in a collection whose name contains the words "home range":
 
     zot search --collection "home range"
 
-will return the keys of items which are in a collection
-whose name contains the words "home range." 
+...which by itself is not very useful. To display the full bibliography for each of these items:
 
     zot search --collection "home range" | zot bib
 
-will display the full bibliography for each of these items,
+Or, a list of all files attached to these items:
 
     zot search --collection "home range" | zot files
 
-will display a list of all files attached to these items, etc.
+...etc.

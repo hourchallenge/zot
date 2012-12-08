@@ -17,4 +17,8 @@ setup(name='zot',
             'zot = zot.zot:main',
         ],
       },
+      install_requires=[
+                        'sqlalchemy',
+                        'pdfminer',
+                        ]
       )

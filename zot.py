@@ -1,5 +1,7 @@
 import os
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 import sqlalchemy as sql
 from item import Item
 
